@@ -32,10 +32,6 @@ if not df.empty:
     # 데이터 타입을 구분하는 새로운 컬럼 생성
     df['type'] = df['90'].apply(lambda x: '문' if '문' in str(x) else '일반')
     
-    # 전체 데이터프레임에서 라벨 위치를 미리 계산
-    df['label_position'] = (df.reset_index().index % 2)
-    df['y_label_pos'] = df['label_position'].map({0: 35, 1: 65})
-    
     # '문'이 붙은 데이터와 일반 데이터로 분리
     df_moon = df[df['90'].astype(str).str.startswith('문')].copy()
     df_general = df[~df['90'].astype(str).str.startswith('문')].copy()
@@ -56,16 +52,8 @@ if not df.empty:
         y=alt.value(50),
         tooltip=['245', alt.Tooltip('90_value', title='90 컬럼 값')]
     )
-
-    text_labels_moon = alt.Chart(df_moon).mark_text(
-        align='center'
-    ).encode(
-        x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
-        y=alt.Y('y_label_pos', axis=None),
-        text=alt.Text('90_value', format='.1f'),
-    )
     
-    chart_moon = (points_moon + text_labels_moon).properties(
+    chart_moon = points_moon.properties(
         title="수평선 상의 '문' 데이터",
         width=700,
         height=200
@@ -89,15 +77,7 @@ if not df.empty:
         tooltip=['245', alt.Tooltip('90_value', title='90 컬럼 값')]
     )
     
-    text_labels_general = alt.Chart(df_general).mark_text(
-        align='center'
-    ).encode(
-        x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
-        y=alt.Y('y_label_pos', axis=None),
-        text=alt.Text('90_value', format='.1f'),
-    )
-    
-    chart_general = (points_general + text_labels_general).properties(
+    chart_general = points_general.properties(
         title="수평선 상의 일반 데이터",
         width=700,
         height=200
@@ -122,16 +102,7 @@ if not df.empty:
         tooltip=['245', alt.Tooltip('90_value', title='90 컬럼 값')]
     )
 
-    text_labels_combined = alt.Chart(df_clean).mark_text(
-        align='center'
-    ).encode(
-        x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
-        y=alt.Y('y_label_pos', axis=None),
-        text=alt.Text('90_value', format='.1f'),
-        color=alt.Color('type', scale=alt.Scale(domain=['문', '일반'], range=['blue', 'yellow'])),
-    )
-
-    chart_combined = (points_combined + text_labels_combined).properties(
+    chart_combined = points_combined.properties(
         title="수평선 상의 전체 데이터 (색상 구분)",
         width=700,
         height=200
