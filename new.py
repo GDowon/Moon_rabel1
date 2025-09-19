@@ -44,7 +44,7 @@ if not df.empty:
         size=100
     ).encode(
         x=alt.X('90_value', axis=alt.Axis(title='값 (90 컬럼)', grid=True), scale=alt.Scale(domain=(0, 1000))),
-        y=alt.value(50), # 점 위치를 50으로 설정
+        y=alt.value(50),
         tooltip=['245', alt.Tooltip('90_value', title='90 컬럼 값')]
     )
 
@@ -52,13 +52,13 @@ if not df.empty:
     text_labels_moon = alt.Chart(df_moon).mark_text(
         align='left',
         baseline='middle',
-        dx=5, # 텍스트를 점 옆으로 살짝 이동
+        dx=5,
         dy=-5,
-        angle=-45 # 라벨 기울기 적용
     ).encode(
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
         y=alt.value(50),
-        text=alt.Text('90_value', format='.1f')
+        text=alt.Text('90_value', format='.1f'),
+        angle=alt.value(-45) # 기울기 속성을 encode() 함수로 이동
     )
     
     chart_moon = (points_moon + text_labels_moon).properties(
@@ -82,7 +82,7 @@ if not df.empty:
         size=100
     ).encode(
         x=alt.X('90_value', axis=alt.Axis(title='값 (90 컬럼)', grid=True), scale=alt.Scale(domain=(0, 1000))),
-        y=alt.value(50), # 점 위치를 50으로 설정
+        y=alt.value(50),
         tooltip=['245', alt.Tooltip('90_value', title='90 컬럼 값')]
     )
     
@@ -92,11 +92,11 @@ if not df.empty:
         baseline='middle',
         dx=5,
         dy=-5,
-        angle=-45 # 라벨 기울기 적용
     ).encode(
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
         y=alt.value(50),
-        text=alt.Text('90_value', format='.1f')
+        text=alt.Text('90_value', format='.1f'),
+        angle=alt.value(-45) # 기울기 속성을 encode() 함수로 이동
     )
     
     chart_general = (points_general + text_labels_general).properties(
@@ -120,7 +120,7 @@ if not df.empty:
         size=100
     ).encode(
         x=alt.X('90_value', axis=alt.Axis(title='값 (90 컬럼)', grid=True), scale=alt.Scale(domain=(0, 1000))),
-        y=alt.value(50), # 점 위치를 50으로 설정
+        y=alt.value(50),
         color=alt.Color('type', scale=alt.Scale(domain=['문', '일반'], range=['blue', 'yellow'])),
         tooltip=['245', alt.Tooltip('90_value', title='90 컬럼 값')]
     )
@@ -131,12 +131,12 @@ if not df.empty:
         baseline='middle',
         dx=5,
         dy=-5,
-        angle=-45 # 라벨 기울기 적용
     ).encode(
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
         y=alt.value(50),
         text=alt.Text('90_value', format='.1f'),
-        color=alt.Color('type', scale=alt.Scale(domain=['문', '일반'], range=['blue', 'yellow']))
+        color=alt.Color('type', scale=alt.Scale(domain=['문', '일반'], range=['blue', 'yellow'])),
+        angle=alt.value(-45) # 기울기 속성을 encode() 함수로 이동
     )
 
     chart_combined = (points_combined + text_labels_combined).properties(
