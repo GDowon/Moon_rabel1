@@ -34,7 +34,7 @@ if not df.empty:
     
     # 전체 데이터프레임에서 라벨 위치를 미리 계산
     df['label_position'] = (df.reset_index().index % 2)
-    df['y_label_pos'] = df['label_position'].map({0: 35, 1: 65})
+    df['y_label_fixed_pos'] = df['label_position'].map({0: 70, 1: 20})
     
     # '문'이 붙은 데이터와 일반 데이터로 분리
     df_moon = df[df['90'].astype(str).str.startswith('문')].copy()
@@ -52,23 +52,24 @@ if not df.empty:
         filled=True,
         size=100
     ).encode(
-        x=alt.X('90_value', axis=alt.Axis(title='값 (90 컬럼)', grid=True), scale=alt.Scale(domain=(0, 1000))),
-        y=alt.value(50),
+        x=alt.value(200),
+        y=alt.Y('90_value', axis=alt.Axis(title='값 (90 컬럼)', grid=True), scale=alt.Scale(domain=(0, 1000))),
         tooltip=['245', alt.Tooltip('90_value', title='90 컬럼 값')]
     )
 
     text_labels_moon = alt.Chart(df_moon).mark_text(
         align='center'
     ).encode(
-        x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
-        y=alt.Y('y_label_pos', axis=None),
+        x=alt.value(200),
+        y=alt.Y('y_label_fixed_pos', axis=None),
         text=alt.Text('90_value', format='.1f'),
+        angle=alt.value(-50)
     )
     
     chart_moon = (points_moon + text_labels_moon).properties(
-        title="수평선 상의 '문' 데이터",
-        width=700,
-        height=200
+        title="수직선 상의 '문' 데이터",
+        width=200,
+        height=700
     ).interactive()
 
     st.altair_chart(chart_moon, use_container_width=True)
@@ -84,23 +85,24 @@ if not df.empty:
         filled=True,
         size=100
     ).encode(
-        x=alt.X('90_value', axis=alt.Axis(title='값 (90 컬럼)', grid=True), scale=alt.Scale(domain=(0, 1000))),
-        y=alt.value(50),
+        x=alt.value(200),
+        y=alt.Y('90_value', axis=alt.Axis(title='값 (90 컬럼)', grid=True), scale=alt.Scale(domain=(0, 1000))),
         tooltip=['245', alt.Tooltip('90_value', title='90 컬럼 값')]
     )
     
     text_labels_general = alt.Chart(df_general).mark_text(
         align='center'
     ).encode(
-        x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
-        y=alt.Y('y_label_pos', axis=None),
+        x=alt.value(200),
+        y=alt.Y('y_label_fixed_pos', axis=None),
         text=alt.Text('90_value', format='.1f'),
+        angle=alt.value(-50)
     )
     
     chart_general = (points_general + text_labels_general).properties(
-        title="수평선 상의 일반 데이터",
-        width=700,
-        height=200
+        title="수직선 상의 일반 데이터",
+        width=200,
+        height=700
     ).interactive()
 
     st.altair_chart(chart_general, use_container_width=True)
@@ -116,8 +118,8 @@ if not df.empty:
         filled=True,
         size=100
     ).encode(
-        x=alt.X('90_value', axis=alt.Axis(title='값 (90 컬럼)', grid=True), scale=alt.Scale(domain=(0, 1000))),
-        y=alt.value(50),
+        x=alt.value(200),
+        y=alt.Y('90_value', axis=alt.Axis(title='값 (90 컬럼)', grid=True), scale=alt.Scale(domain=(0, 1000))),
         color=alt.Color('type', scale=alt.Scale(domain=['문', '일반'], range=['blue', 'yellow'])),
         tooltip=['245', alt.Tooltip('90_value', title='90 컬럼 값')]
     )
@@ -125,16 +127,17 @@ if not df.empty:
     text_labels_combined = alt.Chart(df_clean).mark_text(
         align='center'
     ).encode(
-        x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
-        y=alt.Y('y_label_pos', axis=None),
+        x=alt.value(200),
+        y=alt.Y('y_label_fixed_pos', axis=None),
         text=alt.Text('90_value', format='.1f'),
+        angle=alt.value(-50),
         color=alt.Color('type', scale=alt.Scale(domain=['문', '일반'], range=['blue', 'yellow'])),
     )
 
     chart_combined = (points_combined + text_labels_combined).properties(
-        title="수평선 상의 전체 데이터 (색상 구분)",
-        width=700,
-        height=200
+        title="수직선 상의 전체 데이터 (색상 구분)",
+        width=200,
+        height=700
     ).interactive()
 
     st.altair_chart(chart_combined, use_container_width=True)
