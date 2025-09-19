@@ -57,7 +57,7 @@ if not df.empty:
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
         y=alt.value(50),
         text=alt.Text('90_value', format='.1f'),
-        dy=alt.Y('text_dy:Q', axis=None) # Y축 값으로 인코딩
+        dy=alt.value('text_dy') # `alt.Y` 대신 `alt.value`로 수정
     )
     
     chart_moon = (points_moon + text_labels_moon).properties(
@@ -90,7 +90,7 @@ if not df.empty:
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
         y=alt.value(50),
         text=alt.Text('90_value', format='.1f'),
-        dy=alt.Y('text_dy:Q', axis=None)
+        dy=alt.value('text_dy')
     )
     
     chart_general = (points_general + text_labels_general).properties(
@@ -125,7 +125,7 @@ if not df.empty:
         y=alt.value(50),
         text=alt.Text('90_value', format='.1f'),
         color=alt.Color('type', scale=alt.Scale(domain=['문', '일반'], range=['blue', 'yellow'])),
-        dy=alt.Y('text_dy:Q', axis=None)
+        dy=alt.value('text_dy')
     )
 
     chart_combined = (points_combined + text_labels_combined).properties(
