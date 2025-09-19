@@ -26,7 +26,7 @@ if not df.empty:
     df['90_value'] = pd.to_numeric(df['90'].astype(str).str.replace('문', ''), errors='coerce')
     
     # 라벨 교차 배치를 위한 인덱스 생성
-    df['label_position'] = (df.reset_index().index % 2) * 1 # 0 또는 1의 값을 가짐
+    df['label_position'] = (df.reset_index().index % 2) # 0 또는 1의 값을 가짐
     df['text_dy'] = df['label_position'].map({0: -15, 1: 15}) # 짝수 인덱스는 위로, 홀수 인덱스는 아래로
 
     df_moon = df[df['90'].astype(str).str.startswith('문')].copy()
@@ -57,7 +57,7 @@ if not df.empty:
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
         y=alt.value(50),
         text=alt.Text('90_value', format='.1f'),
-        dy=alt.Y('text_dy', axis=None) # y 위치를 데이터에 따라 동적으로 설정
+        dy=alt.Y('text_dy:Q', axis=None) # Y축 값으로 인코딩
     )
     
     chart_moon = (points_moon + text_labels_moon).properties(
@@ -90,7 +90,7 @@ if not df.empty:
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
         y=alt.value(50),
         text=alt.Text('90_value', format='.1f'),
-        dy=alt.Y('text_dy', axis=None)
+        dy=alt.Y('text_dy:Q', axis=None)
     )
     
     chart_general = (points_general + text_labels_general).properties(
@@ -125,7 +125,7 @@ if not df.empty:
         y=alt.value(50),
         text=alt.Text('90_value', format='.1f'),
         color=alt.Color('type', scale=alt.Scale(domain=['문', '일반'], range=['blue', 'yellow'])),
-        dy=alt.Y('text_dy', axis=None)
+        dy=alt.Y('text_dy:Q', axis=None)
     )
 
     chart_combined = (points_combined + text_labels_combined).properties(
