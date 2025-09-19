@@ -2,14 +2,30 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 
+# ----------------------------------------------------
+# 깃허브에서 CSV 파일을 불러오는 함수
+# ----------------------------------------------------
+# st.cache_data 데코레이터는 데이터를 캐싱하여 앱 실행 속도를 향상시킵니다.
+@st.cache_data
+def load_data():
+    # GitHub Raw URL을 사용하여 파일을 직접 읽어옵니다.
+    GITHUB_RAW_URL = "https://raw.githubusercontent.com/GDowon/Moon_rabel1/main/%EB%B6%84%EB%A5%98%EB%B2%88%ED%98%B8.csv"
+    
+    try:
+        # 인코딩 방식을 'cp949'로 지정하여 파일을 읽습니다.
+        df = pd.read_csv(GITHUB_RAW_URL, encoding='cp949')
+        return df
+    except Exception as e:
+        st.error(f"데이터를 불러오는 중 오류가 발생했습니다: {e}")
+        return pd.DataFrame() # 오류 발생 시 빈 데이터프레임 반환
+
 # Streamlit 앱의 제목 설정
 st.title("분류번호.csv 데이터 시각화")
 
-# CSV 파일 불러오기 및 데이터 전처리
-try:
-    # 'cp949' 인코딩을 사용하여 파일 읽기
-    df = pd.read_csv('분류번호.csv', encoding='cp949')
+# CSV 파일 불러오기
+df = load_data()
 
+if not df.empty:
     # '90' 컬럼의 데이터 전처리 및 숫자형으로 변환
     df['90_value'] = pd.to_numeric(df['90'].astype(str).str.replace('문', ''), errors='coerce')
     
@@ -20,7 +36,7 @@ try:
     # 모든 데이터를 위한 'type' 컬럼 추가 및 NaN 값 제거
     df['type'] = df['90'].apply(lambda x: '문' if '문' in str(x) else '일반')
     df_clean = df.dropna(subset=['90_value'])
-    
+
     # ----------------------------------------------------
     # 1. '문'이 붙은 값만 시각화
     # ----------------------------------------------------
@@ -78,8 +94,5 @@ try:
     ).interactive()
 
     st.altair_chart(chart_combined, use_container_width=True)
-
-except FileNotFoundError:
-    st.error("오류: '분류번호.csv' 파일을 찾을 수 없습니다. 파일이 올바른 위치에 있는지 확인해주세요.")
-except Exception as e:
-    st.error(f"오류가 발생했습니다: {e}")
+else:
+    st.write("데이터를 불러오지 못해 차트를 생성할 수 없습니다. GitHub URL을 확인해주세요.")
