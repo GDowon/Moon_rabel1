@@ -7,6 +7,9 @@ import altair as alt
 # ----------------------------------------------------
 @st.cache_data
 def load_data():
+    """
+    GitHub raw URL에서 CSV 파일을 불러옵니다.
+    """
     GITHUB_RAW_URL = "https://raw.githubusercontent.com/GDowon/Moon_rabel1/main/%EB%B6%84%EB%A5%98%EB%B2%88%ED%98%B8.csv"
     
     try:
@@ -23,15 +26,20 @@ st.title("분류번호.csv 데이터 시각화")
 df = load_data()
 
 if not df.empty:
+    # '문' 문자를 제거하고 숫자 타입으로 변환
     df['90_value'] = pd.to_numeric(df['90'].astype(str).str.replace('문', ''), errors='coerce')
     
-    # 라벨 교차 배치를 위한 인덱스 생성
-    df['label_position'] = (df.reset_index().index % 2) # 0 또는 1의 값을 가짐
-    df['text_dy'] = df['label_position'].map({0: -15, 1: 15}) # 짝수 인덱스는 위로, 홀수 인덱스는 아래로
-
+    # 라벨 교차 배치를 위한 새로운 y 위치 컬럼 생성
+    # 0 또는 1의 값을 가짐 (홀수/짝수 인덱스)
+    df['label_position'] = (df.reset_index().index % 2)
+    # 짝수 인덱스는 위(y=35)로, 홀수 인덱스는 아래(y=65)로
+    df['y_label_pos'] = df['label_position'].map({0: 35, 1: 65})
+    
+    # '문'이 붙은 데이터와 일반 데이터로 분리
     df_moon = df[df['90'].astype(str).str.startswith('문')].copy()
     df_general = df[~df['90'].astype(str).str.startswith('문')].copy()
-
+    
+    # 데이터 타입을 구분하는 새로운 컬럼 생성
     df['type'] = df['90'].apply(lambda x: '문' if '문' in str(x) else '일반')
     df_clean = df.dropna(subset=['90_value'])
 
@@ -55,9 +63,8 @@ if not df.empty:
         align='center'
     ).encode(
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
-        y=alt.value(50), # 텍스트 위치를 점과 동일한 y=50에 설정
+        y=alt.Y('y_label_pos', axis=None), # dy 대신 새로운 y 위치 컬럼 사용
         text=alt.Text('90_value', format='.1f'),
-        dy=alt.Y('text_dy:Q', axis=None) # dy는 오프셋을 나타내는 'y' 인코딩
     )
     
     chart_moon = (points_moon + text_labels_moon).properties(
@@ -88,9 +95,8 @@ if not df.empty:
         align='center'
     ).encode(
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
-        y=alt.value(50),
+        y=alt.Y('y_label_pos', axis=None), # dy 대신 새로운 y 위치 컬럼 사용
         text=alt.Text('90_value', format='.1f'),
-        dy=alt.Y('text_dy:Q', axis=None)
     )
     
     chart_general = (points_general + text_labels_general).properties(
@@ -122,10 +128,9 @@ if not df.empty:
         align='center'
     ).encode(
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
-        y=alt.value(50),
+        y=alt.Y('y_label_pos', axis=None), # dy 대신 새로운 y 위치 컬럼 사용
         text=alt.Text('90_value', format='.1f'),
         color=alt.Color('type', scale=alt.Scale(domain=['문', '일반'], range=['blue', 'yellow'])),
-        dy=alt.Y('text_dy:Q', axis=None)
     )
 
     chart_combined = (points_combined + text_labels_combined).properties(
