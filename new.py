@@ -25,6 +25,10 @@ df = load_data()
 if not df.empty:
     df['90_value'] = pd.to_numeric(df['90'].astype(str).str.replace('문', ''), errors='coerce')
     
+    # 라벨 교차 배치를 위한 인덱스 생성
+    df['label_position'] = (df.reset_index().index % 2) * 1 # 0 또는 1의 값을 가짐
+    df['text_dy'] = df['label_position'].map({0: -15, 1: 15}) # 짝수 인덱스는 위로, 홀수 인덱스는 아래로
+
     df_moon = df[df['90'].astype(str).str.startswith('문')].copy()
     df_general = df[~df['90'].astype(str).str.startswith('문')].copy()
 
@@ -37,7 +41,6 @@ if not df.empty:
     st.write("---")
     st.subheader("1. '문' 데이터 시각화")
     
-    # 점 차트 정의
     points_moon = alt.Chart(df_moon).mark_point(
         opacity=0.5,
         filled=True,
@@ -48,17 +51,13 @@ if not df.empty:
         tooltip=['245', alt.Tooltip('90_value', title='90 컬럼 값')]
     )
 
-    # 텍스트 라벨 차트 정의
     text_labels_moon = alt.Chart(df_moon).mark_text(
-        align='left',
-        baseline='middle',
-        dx=5,
-        dy=-5,
+        align='center'
     ).encode(
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
         y=alt.value(50),
         text=alt.Text('90_value', format='.1f'),
-        angle=alt.value(-45) # 기울기 속성을 encode() 함수로 이동
+        dy=alt.Y('text_dy', axis=None) # y 위치를 데이터에 따라 동적으로 설정
     )
     
     chart_moon = (points_moon + text_labels_moon).properties(
@@ -75,7 +74,6 @@ if not df.empty:
     st.write("---")
     st.subheader("2. 일반 데이터 시각화")
 
-    # 점 차트 정의
     points_general = alt.Chart(df_general).mark_point(
         opacity=0.5,
         filled=True,
@@ -86,17 +84,13 @@ if not df.empty:
         tooltip=['245', alt.Tooltip('90_value', title='90 컬럼 값')]
     )
     
-    # 텍스트 라벨 차트 정의
     text_labels_general = alt.Chart(df_general).mark_text(
-        align='left',
-        baseline='middle',
-        dx=5,
-        dy=-5,
+        align='center'
     ).encode(
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
         y=alt.value(50),
         text=alt.Text('90_value', format='.1f'),
-        angle=alt.value(-45) # 기울기 속성을 encode() 함수로 이동
+        dy=alt.Y('text_dy', axis=None)
     )
     
     chart_general = (points_general + text_labels_general).properties(
@@ -113,7 +107,6 @@ if not df.empty:
     st.write("---")
     st.subheader("3. 전체 데이터 시각화")
 
-    # 점 차트 정의
     points_combined = alt.Chart(df_clean).mark_point(
         opacity=0.5,
         filled=True,
@@ -125,18 +118,14 @@ if not df.empty:
         tooltip=['245', alt.Tooltip('90_value', title='90 컬럼 값')]
     )
 
-    # 텍스트 라벨 차트 정의
     text_labels_combined = alt.Chart(df_clean).mark_text(
-        align='left',
-        baseline='middle',
-        dx=5,
-        dy=-5,
+        align='center'
     ).encode(
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
         y=alt.value(50),
         text=alt.Text('90_value', format='.1f'),
         color=alt.Color('type', scale=alt.Scale(domain=['문', '일반'], range=['blue', 'yellow'])),
-        angle=alt.value(-45) # 기울기 속성을 encode() 함수로 이동
+        dy=alt.Y('text_dy', axis=None)
     )
 
     chart_combined = (points_combined + text_labels_combined).properties(
