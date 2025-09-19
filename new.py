@@ -125,4 +125,16 @@ if not df.empty:
         y=alt.value(50),
         text=alt.Text('90_value', format='.1f'),
         color=alt.Color('type', scale=alt.Scale(domain=['문', '일반'], range=['blue', 'yellow'])),
-        dy=alt.Y('text_dy:
+        dy=alt.Y('text_dy:Q', axis=None)
+    )
+
+    chart_combined = (points_combined + text_labels_combined).properties(
+        title="수평선 상의 전체 데이터 (색상 구분)",
+        width=700,
+        height=200
+    ).interactive()
+
+    st.altair_chart(chart_combined, use_container_width=True)
+    
+else:
+    st.write("데이터를 불러오지 못해 차트를 생성할 수 없습니다. GitHub URL을 확인해주세요.")
