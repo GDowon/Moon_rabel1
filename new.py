@@ -44,15 +44,17 @@ if not df.empty:
         size=100
     ).encode(
         x=alt.X('90_value', axis=alt.Axis(title='값 (90 컬럼)', grid=True), scale=alt.Scale(domain=(0, 1000))),
-        y=alt.value(0), # 점 위치를 X축에 맞게 0으로 설정
+        y=alt.value(50), # 점 위치를 50으로 설정
         tooltip=['245', alt.Tooltip('90_value', title='90 컬럼 값')]
     )
 
     # 텍스트 라벨 차트 정의
     text_labels_moon = alt.Chart(df_moon).mark_text(
         align='left',
-        baseline='bottom',
-        dx=5 # 텍스트를 점 옆으로 살짝 이동
+        baseline='middle',
+        dx=5, # 텍스트를 점 옆으로 살짝 이동
+        dy=-5,
+        angle=-45 # 라벨 기울기 적용
     ).encode(
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
         y=alt.value(50),
@@ -80,18 +82,20 @@ if not df.empty:
         size=100
     ).encode(
         x=alt.X('90_value', axis=alt.Axis(title='값 (90 컬럼)', grid=True), scale=alt.Scale(domain=(0, 1000))),
-        y=alt.value(50), # 점 위치를 X축에 맞게 0으로 설정
+        y=alt.value(50), # 점 위치를 50으로 설정
         tooltip=['245', alt.Tooltip('90_value', title='90 컬럼 값')]
     )
     
     # 텍스트 라벨 차트 정의
     text_labels_general = alt.Chart(df_general).mark_text(
         align='left',
-        baseline='bottom',
-        dx=5
+        baseline='middle',
+        dx=5,
+        dy=-5,
+        angle=-45 # 라벨 기울기 적용
     ).encode(
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
-        y=alt.value(0),
+        y=alt.value(50),
         text=alt.Text('90_value', format='.1f')
     )
     
@@ -116,7 +120,7 @@ if not df.empty:
         size=100
     ).encode(
         x=alt.X('90_value', axis=alt.Axis(title='값 (90 컬럼)', grid=True), scale=alt.Scale(domain=(0, 1000))),
-        y=alt.value(50), # 점 위치를 X축에 맞게 0으로 설정
+        y=alt.value(50), # 점 위치를 50으로 설정
         color=alt.Color('type', scale=alt.Scale(domain=['문', '일반'], range=['blue', 'yellow'])),
         tooltip=['245', alt.Tooltip('90_value', title='90 컬럼 값')]
     )
@@ -124,11 +128,13 @@ if not df.empty:
     # 텍스트 라벨 차트 정의
     text_labels_combined = alt.Chart(df_clean).mark_text(
         align='left',
-        baseline='bottom',
-        dx=5
+        baseline='middle',
+        dx=5,
+        dy=-5,
+        angle=-45 # 라벨 기울기 적용
     ).encode(
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
-        y=alt.value(0),
+        y=alt.value(50),
         text=alt.Text('90_value', format='.1f'),
         color=alt.Color('type', scale=alt.Scale(domain=['문', '일반'], range=['blue', 'yellow']))
     )
