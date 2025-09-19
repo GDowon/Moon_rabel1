@@ -57,7 +57,7 @@ if not df.empty:
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
         y=alt.value(50),
         text=alt.Text('90_value', format='.1f'),
-        dy=alt.value('text_dy') # `alt.Y` 대신 `alt.value`로 수정
+        dy=alt.Y('text_dy:Q', axis=None)
     )
     
     chart_moon = (points_moon + text_labels_moon).properties(
@@ -90,7 +90,7 @@ if not df.empty:
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
         y=alt.value(50),
         text=alt.Text('90_value', format='.1f'),
-        dy=alt.value('text_dy')
+        dy=alt.Y('text_dy:Q', axis=None)
     )
     
     chart_general = (points_general + text_labels_general).properties(
@@ -125,16 +125,4 @@ if not df.empty:
         y=alt.value(50),
         text=alt.Text('90_value', format='.1f'),
         color=alt.Color('type', scale=alt.Scale(domain=['문', '일반'], range=['blue', 'yellow'])),
-        dy=alt.value('text_dy')
-    )
-
-    chart_combined = (points_combined + text_labels_combined).properties(
-        title="수평선 상의 전체 데이터 (색상 구분)",
-        width=700,
-        height=200
-    ).interactive()
-
-    st.altair_chart(chart_combined, use_container_width=True)
-    
-else:
-    st.write("데이터를 불러오지 못해 차트를 생성할 수 없습니다. GitHub URL을 확인해주세요.")
+        dy=alt.Y('text_dy:
