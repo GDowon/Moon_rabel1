@@ -55,9 +55,9 @@ if not df.empty:
         align='center'
     ).encode(
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
-        y=alt.value(50),
+        y=alt.value(50), # 텍스트 위치를 점과 동일한 y=50에 설정
         text=alt.Text('90_value', format='.1f'),
-        dy=alt.Y('text_dy:Q', axis=None)
+        dy=alt.Y('text_dy:Q', axis=None) # dy는 오프셋을 나타내는 'y' 인코딩
     )
     
     chart_moon = (points_moon + text_labels_moon).properties(
