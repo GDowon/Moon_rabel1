@@ -29,19 +29,21 @@ if not df.empty:
     # '문' 문자를 제거하고 숫자 타입으로 변환
     df['90_value'] = pd.to_numeric(df['90'].astype(str).str.replace('문', ''), errors='coerce')
     
-    # 라벨 교차 배치를 위한 새로운 y 위치 컬럼 생성
-    # 0 또는 1의 값을 가짐 (홀수/짝수 인덱스)
-    df['label_position'] = (df.reset_index().index % 2)
-    # 짝수 인덱스는 위(y=35)로, 홀수 인덱스는 아래(y=65)로
-    df['y_label_pos'] = df['label_position'].map({0: 35, 1: 65})
-    
-    # '문'이 붙은 데이터와 일반 데이터로 분리
-    df_moon = df[df['90'].astype(str).str.startswith('문')].copy()
-    df_general = df[~df['90'].astype(str).str.startswith('문')].copy()
-    
     # 데이터 타입을 구분하는 새로운 컬럼 생성
     df['type'] = df['90'].apply(lambda x: '문' if '문' in str(x) else '일반')
-    df_clean = df.dropna(subset=['90_value'])
+    
+    # '문'이 붙은 데이터와 일반 데이터로 분리하고, 라벨 위치를 계산
+    df_moon = df[df['90'].astype(str).str.startswith('문')].copy()
+    df_moon['label_position'] = (df_moon.reset_index().index % 2)
+    df_moon['y_label_pos'] = df_moon['label_position'].map({0: 35, 1: 65})
+    
+    df_general = df[~df['90'].astype(str).str.startswith('문')].copy()
+    df_general['label_position'] = (df_general.reset_index().index % 2)
+    df_general['y_label_pos'] = df_general['label_position'].map({0: 35, 1: 65})
+    
+    df_clean = df.dropna(subset=['90_value']).copy()
+    df_clean['label_position'] = (df_clean.reset_index().index % 2)
+    df_clean['y_label_pos'] = df_clean['label_position'].map({0: 35, 1: 65})
 
     # ----------------------------------------------------
     # 1. '문'이 붙은 값만 시각화
@@ -63,7 +65,7 @@ if not df.empty:
         align='center'
     ).encode(
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
-        y=alt.Y('y_label_pos', axis=None), # dy 대신 새로운 y 위치 컬럼 사용
+        y=alt.Y('y_label_pos', axis=None),
         text=alt.Text('90_value', format='.1f'),
     )
     
@@ -95,7 +97,7 @@ if not df.empty:
         align='center'
     ).encode(
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
-        y=alt.Y('y_label_pos', axis=None), # dy 대신 새로운 y 위치 컬럼 사용
+        y=alt.Y('y_label_pos', axis=None),
         text=alt.Text('90_value', format='.1f'),
     )
     
@@ -128,7 +130,7 @@ if not df.empty:
         align='center'
     ).encode(
         x=alt.X('90_value', scale=alt.Scale(domain=(0, 1000))),
-        y=alt.Y('y_label_pos', axis=None), # dy 대신 새로운 y 위치 컬럼 사용
+        y=alt.Y('y_label_pos', axis=None),
         text=alt.Text('90_value', format='.1f'),
         color=alt.Color('type', scale=alt.Scale(domain=['문', '일반'], range=['blue', 'yellow'])),
     )
